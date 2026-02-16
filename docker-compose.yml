@@ -1,0 +1,67 @@
+# ═══════════════════════════════════════════════════════════════
+#  Artikeys E-Learning Platform — Docker Compose
+#  One command: docker compose up -d --build
+# ═══════════════════════════════════════════════════════════════
+
+services:
+  # ─── MySQL 8 Database ─────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: artikeys-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secret
+      MYSQL_DATABASE: artikeys
+      MYSQL_USER: artikeys_user
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secret" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Laravel Backend (PHP 8.2) ────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    container_name: artikeys-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: docker
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: artikeys
+      DB_USERNAME: artikeys_user
+      DB_PASSWORD: secret
+
+  # ─── Angular Frontend (Dev Server) ────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    container_name: artikeys-frontend
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    # Polling is often needed for file change detection on Windows/WSL
+    command: npx ng serve --host 0.0.0.0 --port 4200 --allowed-hosts all --poll 2000
+
+volumes:
+  db_data:
+    driver: local

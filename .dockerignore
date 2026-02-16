@@ -1,0 +1,28 @@
+# ─── Dependencies (installed inside container) ───
+backend/vendor/
+frontend/node_modules/
+
+# ─── Symlinks (created by artisan at runtime) ─────
+backend/public/storage
+backend/public/hot
+
+# ─── Environment files ────────────────────────────
+backend/.env
+
+# ─── Build output ─────────────────────────────────
+frontend/dist/
+
+# ─── IDE / OS ─────────────────────────────────────
+.idea/
+.vscode/
+.git/
+.gitignore
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ─── Docs / Artifacts ────────────────────────────
+README.md
+*.md
+!backend/README.md

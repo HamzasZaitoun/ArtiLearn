@@ -1,0 +1,19 @@
+{
+    "id": "artikeys-environments",
+    "name": "Artikeys Environments",
+    "values": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api",
+            "enabled": true,
+            "type": "default"
+        }
+    ],
+    "_postman_variable_scope": "environment",
+    "_postman_exported_at": "2026-02-16T00:00:00.000Z",
+    "_postman_exported_using": "Artikeys Dev Setup",
+    "_notes": {
+        "localhost": "http://localhost:8000/api — when running `php artisan serve` locally",
+        "docker": "http://localhost:8000/api — same port, backend container maps 8000:8000"
+    }
+}
